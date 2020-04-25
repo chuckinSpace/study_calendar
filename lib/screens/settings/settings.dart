@@ -7,7 +7,6 @@ import 'package:study_calendar/models/user_data.dart';
 import 'package:study_calendar/screens/settings/calendarsList.dart';
 import 'package:study_calendar/screens/settings/cutOffNumberPicker.dart';
 import 'package:study_calendar/screens/settings/sweetNumberPicker.dart';
-import 'package:study_calendar/services/auth.dart';
 import 'package:study_calendar/services/database.dart';
 import 'package:tutorial_coach_mark/animated_focus_light.dart';
 import 'package:tutorial_coach_mark/target_focus.dart';

@@ -1,11 +1,8 @@
 import 'package:flutter/material.dart';
 import 'package:font_awesome_flutter/font_awesome_flutter.dart';
-
 import 'package:study_calendar/items.dart';
 import 'package:study_calendar/screens/settings/settings.dart';
 import 'package:study_calendar/services/database.dart';
-
-import 'home/home.dart';
 
 class WelcomeScreen extends StatefulWidget {
   final String uid;
