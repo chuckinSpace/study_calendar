@@ -23,7 +23,6 @@ class DatabaseService {
       if (user.exists == false) {
         await userCollection.document(uid).setData({
           "email": email,
-          "isConfigured": false,
           "morning": 7,
           "night": 23,
           "nightOwl": true,
@@ -32,7 +31,9 @@ class DatabaseService {
           "calendarToUse": "",
           "calendarToUseName": "",
           "isWelcomeScreenSeen": false,
-          "deviceCalendars": []
+          "deviceCalendars": [],
+          "isSettingsTutorialSeen": false,
+          "isHomeTutorialSeen": false,
         });
         final calendars = await _device.retrieveCalendars();
 
@@ -74,6 +75,8 @@ class DatabaseService {
     int importance,
     String description,
     DateTime dueDate,
+    DateTime startTime,
+    DateTime endTime,
     UserData _userData,
   ) async {
     print("uid on create test $uid");
@@ -86,8 +89,8 @@ class DatabaseService {
         "importance": importance,
         "description": description,
         "dueDate": dueDate,
-        "start": dueDate,
-        "end": dueDate.add(new Duration(hours: 2)),
+        "start": startTime,
+        "end": endTime,
         "calendarToUse": _userData.calendarToUse,
         "email": _userData.email
       };
@@ -107,7 +110,7 @@ class DatabaseService {
         "importance": backTest["importance"],
         "description": backTest["description"],
         "dueDate": backTest["dueDate"].toDate(),
-        "start": backTest["dueDate"].toDate(),
+        "start": backTest["start"].toDate(),
         "end": backTest["end"].toDate(),
         "testId": testSnap.documentID
       };
@@ -125,12 +128,36 @@ class DatabaseService {
     }
   }
 
+  Future<void> setCalendars(UserData _userData) async {
+    final _deviceCalendars = await EventFromDevice().retrieveCalendars();
+    bool idFound = false;
+    //search for current calendar id on device, if found, check name, if its different update the name
+    _deviceCalendars.forEach((cal) async {
+      if (cal["id"] == _userData.calendarToUse) {
+        print("id found");
+        idFound = true;
+        if (cal["name"] != _userData.calendarToUseName) {
+          print("diff cal name, updating");
+          await updateDocument(
+              "users", _userData.uid, {"calendarToUseName": cal["name"]});
+        }
+      }
+    });
+    if (!idFound) {
+      print("calendar not found setting blank");
+      //if current calendar is not found on the device anymore (deleted) set user dalendar info to "" to force update
+      await updateDocument("users", _userData.uid,
+          {"calendarToUseName": "", "calendarToUse": ""});
+    }
+    await updateDocument(
+        "users", _userData.uid, {"deviceCalendars": _deviceCalendars});
+  }
+
   UserData _userDataFromSnapshot(DocumentSnapshot snapshot) {
     try {
       return snapshot.exists
           ? UserData(
               uid: snapshot?.documentID,
-              isConfigured: snapshot?.data["isConfigured"] ?? false,
               email: snapshot?.data["email"] ?? "",
               morning: snapshot?.data["morning"] ?? 7,
               night: snapshot?.data["night"] ?? 23,
@@ -142,6 +169,9 @@ class DatabaseService {
               isWelcomeScreenSeen:
                   snapshot?.data["isWelcomeScreenSeen"] ?? false,
               deviceCalendars: snapshot?.data["deviceCalendars"] ?? [],
+              isSettingsTutorialSeen:
+                  snapshot?.data["isSettingsTutorialSeen"] ?? true,
+              isHomeTutorialSeen: snapshot?.data["isHomeTutorialSeen"],
               isLoading: false)
           : UserData(isLoading: true);
     } catch (e) {
@@ -174,23 +204,25 @@ class DatabaseService {
     }
   }
 
-  Future deleteTest(
+  Future<int> deleteTest(
       String testId, String calendarToUse, String calendarEventId) async {
     try {
-      deleteSessions(testId, calendarToUse);
+      int sessionsDeleted = await deleteSessions(testId, calendarToUse);
       await testCollection.document(testId).delete();
       EventFromDevice().deleteCalendarEvent(calendarToUse, calendarEventId);
+      return sessionsDeleted;
     } catch (e) {
       print("error deleting $e");
+      return 0;
     }
   }
 
-  Future deleteSessions(String testId, String calendarToUse) async {
+  Future<int> deleteSessions(String testId, String calendarToUse) async {
     await deleteDeviceEvents(testId);
-    await deleteDocumentWhere("sessions", "testId", testId);
+    return await deleteDocumentWhere("sessions", "testId", testId);
   }
 
-  Future deleteDocumentWhere(
+  Future<int> deleteDocumentWhere(
       String collection, String whereParam, String isEqualToParam) async {
     try {
       print("in delete document where");
@@ -200,8 +232,10 @@ class DatabaseService {
           .getDocuments();
 
       results.documents.forEach((doc) async => await doc.reference.delete());
+      return results.documents.length;
     } catch (e) {
       print("error deleting $e");
+      return 0;
     }
   }
 

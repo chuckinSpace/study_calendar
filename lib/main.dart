@@ -10,6 +10,8 @@ import 'package:study_calendar/models/user_data.dart';
 import 'package:study_calendar/services/database.dart';
 import 'package:study_calendar/wrapper.dart';
 
+import 'generated/l10n.dart';
+
 void main() => runApp(MyApp());
 
 class MyApp extends StatelessWidget {
@@ -64,16 +66,19 @@ class _AppWrapperState extends State<AppWrapper> {
         localizationsDelegates: [
           GlobalMaterialLocalizations.delegate,
           GlobalWidgetsLocalizations.delegate,
+          GlobalCupertinoLocalizations.delegate,
+          S.delegate
         ],
+        supportedLocales: S.delegate.supportedLocales,
         navigatorObservers: <NavigatorObserver>[observer],
         theme: ThemeData(
           primaryColor: Color(0xFF4F3961),
           accentColor: Color(0xFFFFFFFF),
           appBarTheme: AppBarTheme(
             iconTheme: IconThemeData(color: Colors.black),
-            color: Colors.white,
+            color: Colors.blueGrey.shade300,
           ),
-          backgroundColor: Colors.grey.shade100,
+          backgroundColor: Colors.teal.shade50,
           buttonColor: Color(0xFFFFFFFF),
           textTheme: TextTheme(
             title: TextStyle(

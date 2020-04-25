@@ -56,7 +56,7 @@ class EventFromDevice {
       if (calendarsResult.isSuccess && calendarsResult.data.isNotEmpty) {
         calendarsResult.data.forEach((doc) {
           if (doc.id != null) {
-            calendars.add({"id": doc.id, "name": doc.name, "inUse": false});
+            calendars.add({"id": doc.id, "name": doc.name});
           }
         });
         return calendars;

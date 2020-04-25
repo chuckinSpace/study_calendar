@@ -252,7 +252,7 @@ class TimeAllocation {
     }
   }
 
-  Future<void> calculateSessions() async {
+  Future<int> calculateSessions() async {
     try {
       /* DatabaseService database = new DatabaseService(uid:_userData.uid); */
       /*  final userInfo = await database.getUserSettings(); */
@@ -269,15 +269,16 @@ class TimeAllocation {
 
       if (sweetSpotSessions == null) {
         print("not enough days to allocate ending");
+        return 0;
       } else {
         print("sessions to create");
         sweetSpotSessions.forEach((session) => print("$session\n"));
         print("CALLING ACCOMODATE");
-        await accomodateSessions(sweetSpotSessions, eventsFromDevice);
-        print("ACOMMODATE FINISHED");
+        return await accomodateSessions(sweetSpotSessions, eventsFromDevice);
       }
     } catch (e) {
       print(" error on calculate Sessions $e");
+      return 0;
     }
   }
 
@@ -754,7 +755,7 @@ class TimeAllocation {
 
   } */
 
-  Future<void> createSessions(List<Session> finalSessions) async {
+  Future<int> createSessions(List<Session> finalSessions) async {
     setSessionNumber(finalSessions);
 
     this.finalSessions = finalSessions;
@@ -763,6 +764,7 @@ class TimeAllocation {
         await DatabaseService().createSessions(this.userData, this.testId,
             session.sessionNumber, session.start, session.end);
       });
+      return finalSessions.length;
     } else {
       print("testing enviroment, in create function");
       return null;
@@ -863,7 +865,7 @@ class TimeAllocation {
     }
   }
 
-  Future<void> accomodateSessions(
+  Future<int> accomodateSessions(
       List<Map> sessions, List<EventFromDevice> eventsFromDevice) async {
     try {
       //first try to sessions created
@@ -915,9 +917,10 @@ class TimeAllocation {
       if (hoursToAdd != 0) {
         addHours(finalSessions, hoursToAdd, eventsFromDevice);
       }
-      await createSessions(this.finalSessions);
+      return await createSessions(this.finalSessions);
     } catch (e) {
       print("accomodateSessions error $e");
+      return 0;
     }
   }
 }

@@ -1,6 +1,8 @@
+import 'package:auto_size_text/auto_size_text.dart';
 import 'package:flutter/material.dart';
 import 'package:font_awesome_flutter/font_awesome_flutter.dart';
 import 'package:provider/provider.dart';
+import 'package:study_calendar/generated/l10n.dart';
 import 'package:study_calendar/models/user_data.dart';
 import 'package:study_calendar/screens/settings/calendarsList.dart';
 import 'package:study_calendar/screens/settings/cutOffNumberPicker.dart';
@@ -25,28 +27,46 @@ class _SettingsState extends State<Settings> {
   bool _isSweetExpanded = false;
   bool _isCutExpanded = false;
   List<TargetFocus> targets = List();
+  UserData _userData;
+  bool _isCalendarSet;
 
   void initState() {
     super.initState();
+    WidgetsBinding.instance.addPostFrameCallback((_) => checkTutorial(context));
+  }
+
+  @override
+  void didChangeDependencies() async {
+    _userData = Provider.of<UserData>(context);
+    _isCalendarSet = _userData.calendarToUse != "";
     initTargets();
+    await DatabaseService().setCalendars(_userData);
+    super.didChangeDependencies();
+  }
+
+  void checkTutorial(BuildContext context) {
+    if (_isCalendarSet != null &&
+        !_isCalendarSet &&
+        !_userData.isSettingsTutorialSeen) {
+      _showTutorial(context);
+      DatabaseService().updateDocument(
+          "users", _userData.uid, {"isSettingsTutorialSeen": true});
+    }
   }
 
   @override
   Widget build(BuildContext context) {
-    final _userData = Provider.of<UserData>(context);
-    bool _isCalendarSet = _userData.calendarToUse != "";
-
     return Scaffold(
       appBar: AppBar(
         title: Text(
-          "Settings",
+          S.of(context).settings,
           style: Theme.of(context).textTheme.title,
         ),
         actions: <Widget>[
           IconButton(
-            tooltip: "Show Tutorial",
+            tooltip: S.of(context).settings,
             icon: FaIcon(FontAwesomeIcons.question),
-            onPressed: () => _showTutorial(),
+            onPressed: () => _showTutorial(context),
           ),
         ],
       ),
@@ -76,11 +96,21 @@ class _SettingsState extends State<Settings> {
                                   () => _isCalendarExpanded = expanding),
                               children: [CalendarList()],
                               title: _isCalendarSet
-                                  ? Text("Calendar to use",
+                                  ? Text(S.of(context).calendarToUse,
                                       style: TextStyle(color: Colors.white))
                                   : Center(
-                                      child: Text("SELECT A CALENDAR",
-                                          style: TextStyle(color: Colors.red)),
+                                      child: Padding(
+                                        padding:
+                                            const EdgeInsets.only(top: 15.0),
+                                        child: AutoSizeText(
+                                            S.of(context).selectACalendar,
+                                            maxLines: 1,
+                                            minFontSize: 15,
+                                            style: TextStyle(
+                                              color: Colors.black,
+                                              fontWeight: FontWeight.bold,
+                                            )),
+                                      ),
                                     ),
                               leading: FaIcon(
                                 _isCalendarSet
@@ -88,7 +118,8 @@ class _SettingsState extends State<Settings> {
                                     : FontAwesomeIcons.exclamationTriangle,
                                 color: _isCalendarSet
                                     ? Colors.white
-                                    : Colors.yellowAccent,
+                                    : Colors.yellow.shade200,
+                                size: 25,
                               ),
                               trailing: FaIcon(
                                 _isCalendarExpanded
@@ -115,7 +146,7 @@ class _SettingsState extends State<Settings> {
                                     : FontAwesomeIcons.chevronDown,
                                 color: Colors.white,
                               ),
-                              title: Text("Sweet spot",
+                              title: Text(S.of(context).sweetSpot,
                                   style: TextStyle(color: Colors.white)),
                               leading: FaIcon(
                                 FontAwesomeIcons.clock,
@@ -136,7 +167,7 @@ class _SettingsState extends State<Settings> {
                                     : FontAwesomeIcons.chevronDown,
                                 color: Colors.white,
                               ),
-                              title: Text("Cut Offs",
+                              title: Text(S.of(context).cutOff,
                                   style: TextStyle(color: Colors.white)),
                               leading: FaIcon(
                                 FontAwesomeIcons.bed,
@@ -146,14 +177,18 @@ class _SettingsState extends State<Settings> {
                             _buildContainer(),
                             SwitchListTile(
                               key: _showNightOwl,
-                              value: _userData?.nightOwl,
-                              onChanged: (value) => DatabaseService()
-                                  .updateDocument("users", _userData.uid,
-                                      {"nightOwl": value}),
-                              title: Text("Night Owl",
+                              value: _userData.nightOwl ?? true,
+                              onChanged: (value) {
+                                if (_userData != null) {
+                                  print("in night owl");
+                                  DatabaseService().updateDocument("users",
+                                      _userData.uid, {"nightOwl": value});
+                                }
+                              },
+                              title: Text(S.of(context).nightOwl,
                                   style: TextStyle(color: Colors.white)),
                             ),
-                            _buildContainer(),
+                            /*  _buildContainer(),
                             ListTile(
                               leading: FaIcon(FontAwesomeIcons.user,
                                   color: Colors.white),
@@ -166,9 +201,11 @@ class _SettingsState extends State<Settings> {
                                   },
                                   icon: FaIcon(FontAwesomeIcons.signOutAlt,
                                       color: Colors.white)),
-                              title: Text("Log Out",
-                                  style: TextStyle(color: Colors.white)),
-                            ),
+                              title: Text(
+                                S.of(context).logOut,
+                                style: TextStyle(color: Colors.white),
+                              ),
+                            ), */
                           ],
                         ),
                       )
@@ -191,12 +228,12 @@ class _SettingsState extends State<Settings> {
     );
   }
 
-  void _showTutorial() async {
-    /*  await _toTop(); */
+  void _showTutorial(BuildContext context) async {
     TutorialCoachMark(context,
         targets: targets,
+        alignSkip: Alignment.bottomCenter,
         colorShadow: Colors.red,
-        textSkip: "QUIT",
+        textSkip: S.of(context).done,
         paddingFocus: 10,
         opacityShadow: 1, finish: () {
       print("finish");
@@ -210,38 +247,6 @@ class _SettingsState extends State<Settings> {
 
   void initTargets() {
     targets.add(TargetFocus(
-      identify: "Calendars",
-      keyTarget: _showCalendarToUse,
-      contents: [
-        ContentTarget(
-            align: AlignContent.bottom,
-            child: Container(
-              child: Column(
-                mainAxisSize: MainAxisSize.min,
-                crossAxisAlignment: CrossAxisAlignment.start,
-                children: <Widget>[
-                  Text(
-                    "Calendars",
-                    style: TextStyle(
-                        fontWeight: FontWeight.bold,
-                        color: Colors.white,
-                        fontSize: 20.0),
-                  ),
-                  Padding(
-                    padding: const EdgeInsets.only(top: 10.0),
-                    child: Text(
-                      "The most important part, select here which calendar you use, the list showing here are your device's current calendars. Study Planner will retrieve events from the calendar selected to check for availability,and also will write the tests and sessions created.",
-                      style: TextStyle(color: Colors.white),
-                    ),
-                  )
-                ],
-              ),
-            ))
-      ],
-      shape: ShapeLightFocus.RRect,
-    ));
-
-    targets.add(TargetFocus(
       identify: "Sweet Spot",
       keyTarget: _showSweet,
       contents: [
@@ -253,17 +258,17 @@ class _SettingsState extends State<Settings> {
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: <Widget>[
                   Text(
-                    "Sweet Spot",
+                    S.of(context).sweetSpot,
                     style: TextStyle(
                         fontWeight: FontWeight.bold,
                         color: Colors.white,
-                        fontSize: 20.0),
+                        fontSize: 25.0),
                   ),
                   Padding(
                     padding: const EdgeInsets.only(top: 10.0),
                     child: Text(
-                      "Set the perfect time for you to study, Study Planner will always try to set up sessions during these times as the first option.",
-                      style: TextStyle(color: Colors.white),
+                      S.of(context).sweetSpotTut,
+                      style: TextStyle(color: Colors.white, fontSize: 17),
                     ),
                   )
                 ],
@@ -284,17 +289,17 @@ class _SettingsState extends State<Settings> {
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: <Widget>[
                   Text(
-                    "Cut Off Times",
+                    S.of(context).cutOff,
                     style: TextStyle(
                         fontWeight: FontWeight.bold,
                         color: Colors.white,
-                        fontSize: 20.0),
+                        fontSize: 25.0),
                   ),
                   Padding(
                     padding: const EdgeInsets.only(top: 10.0),
                     child: Text(
-                      "Study Planner will not accomodate any sessions before morning Cut off or after Night Cut off, usually used for bed time.\nHint: \nYou can use the morning cut off to take your classes into account!\nExample: Your classes end every day around 4pm, set the morning cut off to 4pm",
-                      style: TextStyle(color: Colors.white),
+                      S.of(context).cutOffTut,
+                      style: TextStyle(color: Colors.white, fontSize: 17),
                     ),
                   )
                 ],
@@ -315,17 +320,48 @@ class _SettingsState extends State<Settings> {
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: <Widget>[
                   Text(
-                    "Night Owl",
+                    S.of(context).nightOwl,
                     style: TextStyle(
                         fontWeight: FontWeight.bold,
                         color: Colors.white,
-                        fontSize: 20.0),
+                        fontSize: 25.0),
                   ),
                   Padding(
                     padding: const EdgeInsets.only(top: 10.0),
                     child: Text(
-                      "Select if you would rather have sessions later in the day (Night Owl). \nAfter Study Planner tried to allocate on the sweet spot, it will try later in the night if this option is active, otherwise will try earlier in the morning.",
-                      style: TextStyle(color: Colors.white),
+                      S.of(context).nightOwlTut,
+                      style: TextStyle(color: Colors.white, fontSize: 17),
+                    ),
+                  )
+                ],
+              ),
+            ))
+      ],
+      shape: ShapeLightFocus.RRect,
+    ));
+    targets.add(TargetFocus(
+      identify: "Calendars",
+      keyTarget: _showCalendarToUse,
+      contents: [
+        ContentTarget(
+            align: AlignContent.bottom,
+            child: Container(
+              child: Column(
+                mainAxisSize: MainAxisSize.min,
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: <Widget>[
+                  Text(
+                    S.of(context).calendars,
+                    style: TextStyle(
+                        fontWeight: FontWeight.bold,
+                        color: Colors.white,
+                        fontSize: 25.0),
+                  ),
+                  Padding(
+                    padding: const EdgeInsets.only(top: 10.0),
+                    child: Text(
+                      S.of(context).calendarsTut,
+                      style: TextStyle(color: Colors.white, fontSize: 17),
                     ),
                   )
                 ],

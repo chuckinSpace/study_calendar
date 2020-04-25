@@ -3,6 +3,7 @@ import 'package:flutter/material.dart';
 import 'package:font_awesome_flutter/font_awesome_flutter.dart';
 import 'package:numberpicker/numberpicker.dart';
 import 'package:provider/provider.dart';
+import 'package:study_calendar/generated/l10n.dart';
 import 'package:study_calendar/models/user_data.dart';
 
 class SweetNumberPicker extends StatefulWidget {
@@ -35,7 +36,7 @@ class _SweetNumberPickerState extends State<SweetNumberPicker> {
             mainAxisAlignment: MainAxisAlignment.center,
             children: <Widget>[
               Text(
-                "START",
+                S.of(context).start,
                 style: TextStyle(color: Colors.white, fontSize: 13),
               ),
               new NumberPicker.integer(
@@ -68,7 +69,7 @@ class _SweetNumberPickerState extends State<SweetNumberPicker> {
                 ),
               ),
               Text(
-                "END",
+                S.of(context).end,
                 style: TextStyle(color: Colors.white, fontSize: 13),
               ),
               new NumberPicker.integer(
@@ -94,10 +95,10 @@ class _SweetNumberPickerState extends State<SweetNumberPicker> {
           ),
           Visibility(
             visible: _sweetEdit,
-            child: Row(mainAxisAlignment: MainAxisAlignment.center, children: [
-              IconButton(
-                icon:
-                    FaIcon(FontAwesomeIcons.save, color: Colors.red, size: 35),
+            child: Row(mainAxisAlignment: MainAxisAlignment.end, children: [
+              FlatButton(
+                color: Colors.green.shade200,
+                child: Text("SAVE"),
                 onPressed: () async {
                   await _setSweetSpot(_sweetStart, _sweetEnd, _userData.uid);
                   setState(() {

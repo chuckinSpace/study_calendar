@@ -1,13 +1,23 @@
+/*
+ADSS!!!!!!
+LOG OUT!!!
+
+Add a new sessions option
+
+*/
+
 import 'package:firebase_analytics/firebase_analytics.dart';
 import 'package:firebase_analytics/observer.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:font_awesome_flutter/font_awesome_flutter.dart';
 import 'package:provider/provider.dart';
+import 'package:study_calendar/generated/l10n.dart';
 import 'package:study_calendar/models/user_data.dart';
 import 'package:study_calendar/screens/home/setting_form.dart';
 import 'package:study_calendar/screens/home/test_list.dart';
 import 'package:study_calendar/screens/settings/settings.dart';
+import 'package:study_calendar/services/database.dart';
 import 'package:tutorial_coach_mark/animated_focus_light.dart';
 import 'package:tutorial_coach_mark/tutorial_coach_mark.dart';
 import 'package:url_launcher/url_launcher.dart';
@@ -37,16 +47,25 @@ class _HomeState extends State<Home> {
   List<TargetFocus> targets = List();
   List<TargetFocus> settings = List();
 
-  @override
   void initState() {
     super.initState();
-    initTargets();
+    WidgetsBinding.instance.addPostFrameCallback((_) => checkTutorial(context));
   }
 
   didChangeDependencies() async {
+    initTargets();
     super.didChangeDependencies();
     _userData = Provider.of<UserData>(context);
     _user = Provider.of<FirebaseUser>(context);
+    /*  await DatabaseService().setCalendars(_userData); */
+  }
+
+  void checkTutorial(BuildContext context) {
+    if (_userData != null && !_userData.isHomeTutorialSeen) {
+      _showTutorial(context);
+      DatabaseService()
+          .updateDocument("users", _userData.uid, {"isHomeTutorialSeen": true});
+    }
   }
 
   bool showHomeBool = false;
@@ -63,18 +82,18 @@ class _HomeState extends State<Home> {
           children: <Widget>[
             new FloatingActionButton(
               key: _testKey,
-              heroTag: "addTest",
+              heroTag: "Add Test",
               backgroundColor: Colors.blue.shade100,
               onPressed: () => _userData.calendarToUse == ""
                   ? _showSettingsWarning()
                   : _showSettingsPanel(),
-              tooltip: 'Add Test',
+              tooltip: S.of(context).addTest,
               child: new FaIcon(FontAwesomeIcons.plusSquare),
             ),
             FloatingActionButton(
               key: _calendarKey,
               heroTag: "Calendar",
-              tooltip: "Go to Calendar",
+              tooltip: S.of(context).goToCalendar,
               child: FaIcon(FontAwesomeIcons.solidCalendar),
               backgroundColor: Colors.green.shade200,
               onPressed: _launchCalendar,
@@ -86,12 +105,12 @@ class _HomeState extends State<Home> {
         title: Text("Study Calendar", style: Theme.of(context).textTheme.title),
         actions: <Widget>[
           IconButton(
-            tooltip: "Show Tutorial",
+            tooltip: S.of(context).tutorial,
             icon: FaIcon(FontAwesomeIcons.question),
-            onPressed: () => _showTutorial(),
+            onPressed: () => _showTutorial(context),
           ),
           IconButton(
-              tooltip: "Settings",
+              tooltip: S.of(context).settings,
               key: _settingsKey,
               icon: FaIcon(
                 FontAwesomeIcons.userCog,
@@ -138,28 +157,25 @@ class _HomeState extends State<Home> {
             padding: EdgeInsets.only(
                 bottom: MediaQuery.of(context).viewInsets.bottom),
             child: SingleChildScrollView(
-              child: Column(
-                children: <Widget>[
-                  Container(
-                    decoration: BoxDecoration(color: Colors.grey.shade200),
-                    padding: EdgeInsets.symmetric(vertical: 20, horizontal: 20),
-                    child: SettingsForm(),
-                  ),
-                ],
+              child: Container(
+                decoration: BoxDecoration(color: Colors.lightBlue.shade50),
+                padding: EdgeInsets.symmetric(vertical: 20, horizontal: 20),
+                child: SettingsForm(),
               ),
             ),
           );
         });
   }
 
-  void _showTutorial() async {
+  void _showTutorial(BuildContext context) async {
     await analytics.logTutorialBegin();
 
     TutorialCoachMark(context,
         targets: targets,
         colorShadow: Colors.red,
-        textSkip: "QUIT",
+        textSkip: S.of(context).done,
         paddingFocus: 10,
+        alignSkip: Alignment.bottomCenter,
         opacityShadow: 1, finish: () async {
       await analytics.logTutorialComplete();
     }, clickTarget: (target) {
@@ -175,9 +191,10 @@ class _HomeState extends State<Home> {
     TutorialCoachMark(context,
         targets: settings,
         colorShadow: Colors.red,
-        textSkip: "QUIT",
+        textSkip: S.of(context).done,
         paddingFocus: 10,
         opacityShadow: 1,
+        alignSkip: Alignment.bottomCenter,
         finish: () async {}, clickTarget: (target) {
       print(target);
     }, clickSkip: () async {})
@@ -197,17 +214,17 @@ class _HomeState extends State<Home> {
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: <Widget>[
                   Text(
-                    "Show Calendar",
+                    S.of(context).goToCalendar,
                     style: TextStyle(
                         fontWeight: FontWeight.bold,
                         color: Colors.white,
-                        fontSize: 20.0),
+                        fontSize: 25.0),
                   ),
                   Padding(
                     padding: const EdgeInsets.only(top: 10.0),
                     child: Text(
-                      "This open your device's Calendar, where you can check or modify your created sessions and tests, also set reminders if you want",
-                      style: TextStyle(color: Colors.white),
+                      S.of(context).goToCalendarTut,
+                      style: TextStyle(color: Colors.white, fontSize: 17),
                     ),
                   )
                 ],
@@ -229,17 +246,17 @@ class _HomeState extends State<Home> {
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: <Widget>[
                   Text(
-                    "Add Test",
+                    S.of(context).addTest,
                     style: TextStyle(
                         fontWeight: FontWeight.bold,
                         color: Colors.white,
-                        fontSize: 20.0),
+                        fontSize: 25.0),
                   ),
                   Padding(
                     padding: const EdgeInsets.only(top: 10.0),
                     child: Text(
-                      "Add a new test, It will be added to your device's Calendar",
-                      style: TextStyle(color: Colors.white),
+                      S.of(context).addTestTut,
+                      style: TextStyle(color: Colors.white, fontSize: 17),
                     ),
                   )
                 ],
@@ -260,17 +277,17 @@ class _HomeState extends State<Home> {
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: <Widget>[
                   Text(
-                    "Settings",
+                    S.of(context).settings,
                     style: TextStyle(
                         fontWeight: FontWeight.bold,
                         color: Colors.white,
-                        fontSize: 20.0),
+                        fontSize: 25.0),
                   ),
                   Padding(
                     padding: const EdgeInsets.only(top: 10.0),
                     child: Text(
-                      "Use your settings to define what Calendar we should use to write and read events, set you best times to study, cut offs and more",
-                      style: TextStyle(color: Colors.white),
+                      S.of(context).settingsTut,
+                      style: TextStyle(color: Colors.white, fontSize: 17),
                     ),
                   )
                 ],
@@ -291,17 +308,17 @@ class _HomeState extends State<Home> {
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: <Widget>[
                   Text(
-                    "Settings",
+                    S.of(context).settings,
                     style: TextStyle(
                         fontWeight: FontWeight.bold,
                         color: Colors.white,
-                        fontSize: 20.0),
+                        fontSize: 25.0),
                   ),
                   Padding(
                     padding: const EdgeInsets.only(top: 10.0),
                     child: Text(
-                      "Before we Start please select what Calendar we should use here",
-                      style: TextStyle(color: Colors.white),
+                      S.of(context).settingsWarning,
+                      style: TextStyle(color: Colors.white, fontSize: 17),
                     ),
                   )
                 ],

@@ -7,6 +7,7 @@ import 'package:study_calendar/screens/authenticate/signUp.dart';
 
 import 'package:study_calendar/screens/home/home.dart';
 import 'package:provider/provider.dart';
+import 'package:study_calendar/screens/settings/settings.dart';
 import 'package:study_calendar/screens/welcome.dart';
 
 class Wrapper extends StatelessWidget {
@@ -22,12 +23,20 @@ class Wrapper extends StatelessWidget {
       return SignupPage();
     } else {
       if (_userData != null && _userData.isWelcomeScreenSeen != null) {
-        return _userData.isWelcomeScreenSeen
-            ? Home(
-                analytics: analytics,
-                observer: observer,
-              )
-            : WelcomeScreen(_userData.uid);
+        if (!_userData.isWelcomeScreenSeen) {
+          return WelcomeScreen(_userData.uid);
+        } else if (_userData.isWelcomeScreenSeen &&
+            _userData.calendarToUse == "") {
+          return Settings();
+        } else if (_userData.isWelcomeScreenSeen &&
+            _userData.calendarToUse != "") {
+          return Home(
+            analytics: analytics,
+            observer: observer,
+          );
+        } else {
+          return Container();
+        }
       } else {
         return Container();
       }

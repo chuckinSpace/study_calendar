@@ -3,6 +3,7 @@ import 'package:flutter/material.dart';
 import 'package:font_awesome_flutter/font_awesome_flutter.dart';
 import 'package:numberpicker/numberpicker.dart';
 import 'package:provider/provider.dart';
+import 'package:study_calendar/generated/l10n.dart';
 import 'package:study_calendar/models/user_data.dart';
 
 class CutOffNumberPicker extends StatefulWidget {
@@ -35,7 +36,7 @@ class _CutOffNumberPickerState extends State<CutOffNumberPicker> {
             mainAxisAlignment: MainAxisAlignment.center,
             children: <Widget>[
               Text(
-                "MORNING",
+                S.of(context).morning,
                 style: TextStyle(color: Colors.white, fontSize: 13),
               ),
               new NumberPicker.integer(
@@ -67,7 +68,7 @@ class _CutOffNumberPickerState extends State<CutOffNumberPicker> {
                 ),
               ),
               Text(
-                "END",
+                S.of(context).night,
                 style: TextStyle(color: Colors.white, fontSize: 13),
               ),
               new NumberPicker.integer(
@@ -93,10 +94,10 @@ class _CutOffNumberPickerState extends State<CutOffNumberPicker> {
           ),
           Visibility(
             visible: _cutEdit,
-            child: Row(mainAxisAlignment: MainAxisAlignment.center, children: [
-              IconButton(
-                icon:
-                    FaIcon(FontAwesomeIcons.save, color: Colors.red, size: 35),
+            child: Row(mainAxisAlignment: MainAxisAlignment.end, children: [
+              FlatButton(
+                child: Text("SAVE"),
+                color: Colors.green.shade200,
                 onPressed: () async {
                   await _setCutOff(_morning, _night, _userData.uid);
                   setState(() {

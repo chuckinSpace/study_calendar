@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:study_calendar/generated/l10n.dart';
 import 'package:study_calendar/services/auth.dart';
 
 class RecoverPass extends StatefulWidget {
@@ -16,18 +17,18 @@ class _RecoverPassState extends State<RecoverPass> {
   Widget build(BuildContext context) {
     return Scaffold(
       body: Container(
-        margin: EdgeInsets.all(30.0),
-        color: Theme.of(context).backgroundColor,
-        child: Column(mainAxisAlignment: MainAxisAlignment.start, children: [
+        decoration: BoxDecoration(color: Theme.of(context).backgroundColor),
+        child: Column(children: [
           Expanded(
             child: SingleChildScrollView(
               child: Container(
+                margin: EdgeInsets.all(30),
                 padding: EdgeInsets.fromLTRB(10.0, 50.0, 0.0, 0.0),
                 child: RichText(
                   text: TextSpan(
                     children: [
                       TextSpan(
-                        text: "Password Recovery",
+                        text: S.of(context).recover,
                         style: TextStyle(
                             fontSize: 60.0,
                             fontWeight: FontWeight.bold,
@@ -55,7 +56,8 @@ class _RecoverPassState extends State<RecoverPass> {
                 children: <Widget>[
                   TextFormField(
                     controller: _emailControl,
-                    validator: (val) => val.isEmpty ? "Enter an email" : null,
+                    validator: (val) =>
+                        val.isEmpty ? S.of(context).enterEmail : null,
                     onChanged: (value) {
                       setState(() {
                         _currentEmail = value;
@@ -64,9 +66,9 @@ class _RecoverPassState extends State<RecoverPass> {
                     decoration: InputDecoration(
                         prefixIcon: Icon(Icons.email, color: Colors.grey),
                         errorText: _validate && (_currentEmail == "")
-                            ? 'Email Can\'t Be Empty'
+                            ? S.of(context).emailEmpty
                             : null,
-                        labelText: 'EMAIL FOR RECOVERY',
+                        labelText: "EMAIL",
                         labelStyle: TextStyle(
                             fontFamily: 'Montserrat',
                             fontWeight: FontWeight.bold,
@@ -93,7 +95,7 @@ class _RecoverPassState extends State<RecoverPass> {
                     child: RaisedButton(
                       color: Colors.blue,
                       child: Text(
-                        "RECOVER",
+                        S.of(context).recoverBig,
                         style: TextStyle(
                             color: Colors.white,
                             fontWeight: FontWeight.bold,
@@ -113,7 +115,7 @@ class _RecoverPassState extends State<RecoverPass> {
                             });
                           } else {
                             setState(() {
-                              _error = "Email Sent Correctly";
+                              _error = S.of(context).emailSent;
                               _emailControl.clear();
                             });
                           }
@@ -128,7 +130,7 @@ class _RecoverPassState extends State<RecoverPass> {
                     child: OutlineButton(
                         color: Colors.white,
                         child: Text(
-                          'BACK TO LOGIN',
+                          S.of(context).backLogin,
                           style: TextStyle(
                               color: Colors.black,
                               fontWeight: FontWeight.bold,

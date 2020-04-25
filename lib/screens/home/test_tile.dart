@@ -3,13 +3,14 @@ import 'package:flutter/material.dart';
 import 'package:fluttertoast/fluttertoast.dart';
 import 'package:font_awesome_flutter/font_awesome_flutter.dart';
 import 'package:provider/provider.dart';
+import 'package:study_calendar/generated/l10n.dart';
 import 'package:study_calendar/helpers/TimeAllocation.dart';
 import 'package:study_calendar/models/session.dart';
 import 'package:study_calendar/models/test.dart';
-import 'package:study_calendar/models/user_data.dart';
 import 'package:study_calendar/screens/home/session_tile.dart';
 import 'package:study_calendar/services/database.dart';
 import 'package:url_launcher/url_launcher.dart';
+import 'package:intl/intl.dart';
 
 class TestTile extends StatefulWidget {
   final Test test;
@@ -23,6 +24,8 @@ class TestTile extends StatefulWidget {
 class _TestTileState extends State<TestTile> {
   @override
   Widget build(BuildContext context) {
+    final _parsedDueDate =
+        new DateFormat("MMMM, d h:mm a").format(this.widget.test.dueDate);
     return MultiProvider(
       providers: [
         StreamProvider<List<Session>>.value(
@@ -42,15 +45,15 @@ class _TestTileState extends State<TestTile> {
                   leading: IconButton(
                     onPressed: () => _launchCalendarOnEvent(
                         this.widget.test.calendarEventId),
-                    tooltip: "Sessions Added To Calendar",
-                    color: Colors.blueGrey,
-                    icon: Icon(Icons.event_available),
+                    tooltip: S.of(context).goToTest,
+                    color: Colors.green.shade400,
+                    icon: FaIcon(FontAwesomeIcons.solidArrowAltCircleRight),
                   ),
                   trailing: IconButton(
-                    tooltip: "Delete test",
+                    tooltip: S.of(context).deleteTest,
                     color: Colors.blueGrey,
-                    onPressed: () {
-                      _showConfirmDelete();
+                    onPressed: () async {
+                      await _showConfirmDelete();
                     },
                     icon: FaIcon(
                       FontAwesomeIcons.trash,
@@ -59,11 +62,15 @@ class _TestTileState extends State<TestTile> {
                   ),
                   title: AutoSizeText(
                     "${this.widget.test.description} ${this.widget.test.subject}",
-                    style: TextStyle(color: Colors.black),
+                    style: TextStyle(
+                      color: Colors.black,
+                    ),
                     maxLines: 1,
                   ),
-                  subtitle:
-                      Text(_tileText(), style: TextStyle(color: Colors.black)),
+                  subtitle: AutoSizeText(_tileText(_parsedDueDate, context),
+                      maxLines: 1,
+                      style: TextStyle(
+                          color: Colors.black, fontStyle: FontStyle.italic)),
                 ),
               ]),
         ),
@@ -84,29 +91,42 @@ class _TestTileState extends State<TestTile> {
     }
   }
 
-  String _tileText() {
+  String _tileText(String _parsedDueDate, BuildContext context) {
     String text;
     int daysToTest = TimeAllocation().daysUntil(widget.test.dueDate);
 
-    if (daysToTest == 0) {
-      text = "Due Today!";
+    if (daysToTest == 0 && widget.test.dueDate.day == DateTime.now().day) {
+      text = "${S.of(context).dueToday}, $_parsedDueDate";
+    } else if (daysToTest == 0 &&
+        widget.test.dueDate.day != DateTime.now().day) {
+      text = "${S.of(context).dueTomorrow}, $_parsedDueDate";
     } else if (daysToTest == 1) {
-      text = "Due Tomorrow!";
+      text = "${S.of(context).dueTomorrow}, $_parsedDueDate";
     } else if (daysToTest < 0) {
-      text = "Past Due";
+      text = "${S.of(context).pastDue}, $_parsedDueDate";
     } else {
-      text = "Due in $daysToTest days";
+      text = "${S.of(context).dueInDays(daysToTest)}, $_parsedDueDate";
     }
     return text;
   }
 
-  void _showTestDeletedToast() {
+  void _showTestDeletedToast(int numSessionsDeleted, BuildContext context) {
+    String message = "";
+    if (numSessionsDeleted == 0) {
+      message = "${this.widget.test.subject} ${S.of(context).testRemoved}";
+    } else if (numSessionsDeleted == 1) {
+      message =
+          "${this.widget.test.subject} ${S.of(context).testAndOneSession}";
+    } else {
+      message =
+          "${this.widget.test.subject} ${S.of(context).testAndSessions(numSessionsDeleted)}";
+    }
+
     Fluttertoast.showToast(
-      msg:
-          "${this.widget.test.subject}  test and ${this.widget.test.complexity} sessions were Removed from your calendar",
+      msg: message,
       toastLength: Toast.LENGTH_LONG,
       textColor: Colors.black,
-      fontSize: 20,
+      fontSize: 18,
       backgroundColor: Colors.red.shade200,
       timeInSecForIosWeb: 5,
     );
@@ -119,27 +139,31 @@ class _TestTileState extends State<TestTile> {
       builder: (BuildContext context) {
         return AlertDialog(
           title: Text(
-              "This will delete This test and all sessions associated with it from your calendar, are you sure?"),
+            S.of(context).deleteConfirm,
+            textScaleFactor: 1,
+            softWrap: true,
+            style: TextStyle(fontWeight: FontWeight.normal),
+          ),
           content: SingleChildScrollView(
             child: ListBody(
-              children: <Widget>[
-                FlatButton(
-                  child: Text('DELETE'),
-                  onPressed: () async {
-                    await DatabaseService().deleteTest(
-                        this.widget.test.testId,
-                        this.widget.test.calendarToUse,
-                        this.widget.test.calendarEventId);
-                    _showTestDeletedToast();
-                    Navigator.of(context).pop();
-                  },
-                )
-              ],
+              children: <Widget>[],
             ),
           ),
           actions: <Widget>[
             FlatButton(
-              child: Text('Cancel'),
+              child: Text(S.of(context).delete,
+                  style: TextStyle(color: Colors.red.shade400)),
+              onPressed: () async {
+                final numSessionsDeleted = await DatabaseService().deleteTest(
+                    this.widget.test.testId,
+                    this.widget.test.calendarToUse,
+                    this.widget.test.calendarEventId);
+                _showTestDeletedToast(numSessionsDeleted, context);
+                Navigator.of(context).pop();
+              },
+            ),
+            FlatButton(
+              child: Text(S.of(context).cancel.toUpperCase()),
               onPressed: () {
                 Navigator.of(context).pop();
               },

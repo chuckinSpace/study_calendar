@@ -1,5 +1,7 @@
 import 'package:auto_size_text/auto_size_text.dart';
 import 'package:flutter/material.dart';
+import 'package:font_awesome_flutter/font_awesome_flutter.dart';
+import 'package:study_calendar/generated/l10n.dart';
 import 'package:study_calendar/models/session.dart';
 import 'package:url_launcher/url_launcher.dart';
 import 'package:intl/intl.dart';
@@ -22,20 +24,36 @@ class _SessionTileState extends State<SessionTile> {
     return Padding(
       padding: EdgeInsets.only(top: 8),
       child: Card(
-        color: Colors.grey.shade200,
+        color: Colors.grey.shade100,
         elevation: 10,
         margin: EdgeInsets.fromLTRB(20, 6, 20, 0),
         child: Column(
           children: <Widget>[
             ListTile(
-              dense: true,
-              onTap: () => _launchCalendarOnEvent(_session.calendarEventId),
-              title: Center(
-                child: AutoSizeText(
-                  "Session ${_session.sessionNumber} $_start - $_end",
-                  maxLines: 1,
-                  minFontSize: 15,
+              leading: SizedBox(
+                width: 10.0,
+                child: FaIcon(
+                  FontAwesomeIcons.calendarDay,
+                  size: 25,
+                  color: Colors.teal.shade400,
                 ),
+              ),
+              trailing: IconButton(
+                icon: FaIcon(
+                  FontAwesomeIcons.chevronRight,
+                  size: 15,
+                ),
+                onPressed: () =>
+                    _launchCalendarOnEvent(_session.calendarEventId),
+              ),
+              dense: true,
+              subtitle: AutoSizeText(
+                "$_start - $_end",
+                minFontSize: 13,
+              ),
+              title: AutoSizeText(
+                "${S.of(context).session} ${_session.sessionNumber}",
+                minFontSize: 15,
               ),
             ),
           ],

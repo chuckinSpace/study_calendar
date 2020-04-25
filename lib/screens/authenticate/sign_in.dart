@@ -1,4 +1,4 @@
-import 'package:flutter/material.dart';
+/* import 'package:flutter/material.dart';
 import 'package:study_calendar/services/auth.dart';
 
 class SignIn extends StatefulWidget {
@@ -21,8 +21,7 @@ class _SignInState extends State<SignIn> {
             children: <Widget>[
               FlatButton(
                 onPressed: () async {
-                  await _auth.registerWithEmailandPassword(
-                      "user@test.com", "24682468");
+                  await _auth.registerWithEmailandPassword(_);
                 },
                 child: Text("Register"),
               ),
@@ -34,8 +33,7 @@ class _SignInState extends State<SignIn> {
               ),
               FlatButton(
                 onPressed: () async {
-                  await _auth.signInWithEmailandPassword(
-                      "user@test.com", "24682468");
+                  await _auth.signInWithEmailandPassword();
                 },
                 child: Text("Sign In"),
               ),
@@ -52,3 +50,4 @@ class _SignInState extends State<SignIn> {
     );
   }
 }
+ */

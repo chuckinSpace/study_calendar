@@ -1,7 +1,8 @@
 class UserData {
   String uid;
+  bool isHomeTutorialSeen;
+  bool isSettingsTutorialSeen;
   String calendarToUse;
-  bool isConfigured;
   String calendarToUseName;
   String email;
   bool nightOwl;
@@ -13,10 +14,11 @@ class UserData {
   List deviceCalendars;
   bool isLoading;
   UserData(
-      {this.isLoading,
+      {this.isHomeTutorialSeen,
+      this.isSettingsTutorialSeen,
+      this.isLoading,
       this.isWelcomeScreenSeen,
       this.calendarToUseName,
-      this.isConfigured,
       this.calendarToUse,
       this.uid,
       this.morning,
