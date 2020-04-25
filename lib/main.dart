@@ -96,9 +96,9 @@ class _AppWrapperState extends State<AppWrapper> {
         debugShowCheckedModeBanner: false,
         home: Wrapper(analytics: widget.analytics, observer: widget.observer),
         builder: (BuildContext context, Widget widget) {
-          createBannerAd(isIOS)
+          /* createBannerAd(isIOS)
             ..load()
-            ..show();
+            ..show(); */
 
           bool isKeyboardOpen = false;
           isKeyboardOpen = MediaQuery.of(context).viewInsets.bottom != 0;

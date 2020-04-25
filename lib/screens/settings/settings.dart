@@ -7,6 +7,7 @@ import 'package:study_calendar/models/user_data.dart';
 import 'package:study_calendar/screens/settings/calendarsList.dart';
 import 'package:study_calendar/screens/settings/cutOffNumberPicker.dart';
 import 'package:study_calendar/screens/settings/sweetNumberPicker.dart';
+import 'package:study_calendar/services/auth.dart';
 import 'package:study_calendar/services/database.dart';
 import 'package:tutorial_coach_mark/animated_focus_light.dart';
 import 'package:tutorial_coach_mark/target_focus.dart';
@@ -187,7 +188,7 @@ class _SettingsState extends State<Settings> {
                               title: Text(S.of(context).nightOwl,
                                   style: TextStyle(color: Colors.white)),
                             ),
-                            /*  _buildContainer(),
+                            _buildContainer(),
                             ListTile(
                               leading: FaIcon(FontAwesomeIcons.user,
                                   color: Colors.white),
@@ -204,7 +205,7 @@ class _SettingsState extends State<Settings> {
                                 S.of(context).logOut,
                                 style: TextStyle(color: Colors.white),
                               ),
-                            ), */
+                            ),
                           ],
                         ),
                       )
@@ -231,7 +232,7 @@ class _SettingsState extends State<Settings> {
     TutorialCoachMark(context,
         targets: targets,
         alignSkip: Alignment.bottomCenter,
-        colorShadow: Colors.red,
+        colorShadow: Colors.teal.shade200,
         textSkip: S.of(context).done,
         paddingFocus: 10,
         opacityShadow: 1, finish: () {

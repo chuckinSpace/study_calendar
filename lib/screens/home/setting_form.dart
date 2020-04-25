@@ -217,7 +217,9 @@ class _SettingsFormState extends State<SettingsForm> {
                           ? S.of(context).pickADate
                           : " $_parsedDueDate",
                       style: TextStyle(
-                        color: _parsedDueDate == "" ? Colors.red : Colors.black,
+                        color: _parsedDueDate == ""
+                            ? Colors.red.shade400
+                            : Colors.black,
                       ),
                       maxLines: 1,
                       maxFontSize: 14,
@@ -228,14 +230,16 @@ class _SettingsFormState extends State<SettingsForm> {
                 Row(
                   mainAxisAlignment: MainAxisAlignment.center,
                   children: <Widget>[
-                    Text(
-                      "${S.of(context).start}: $_parsedStartTime",
-                      style: TextStyle(fontSize: 15),
+                    SizedBox(
+                      width: 200.0,
+                      child: Text(
+                        "${S.of(context).start}: $_parsedStartTime",
+                        style: TextStyle(fontSize: 20),
+                      ),
                     ),
                     IconButton(
-                        padding: EdgeInsets.only(left: 20.0),
                         focusNode: textSecondFocusNode,
-                        icon: FaIcon(FontAwesomeIcons.clock, size: 30),
+                        icon: FaIcon(FontAwesomeIcons.clock, size: 25),
                         onPressed: () async {
                           await _setStartTime();
                           FocusScope.of(context)
@@ -246,29 +250,31 @@ class _SettingsFormState extends State<SettingsForm> {
                 Row(
                   mainAxisAlignment: MainAxisAlignment.center,
                   children: <Widget>[
-                    Text(
-                      "${S.of(context).end}: $_parsedEndTime",
-                      style: TextStyle(fontSize: 15),
+                    SizedBox(
+                      width: 200.0,
+                      child: Text(
+                        "${S.of(context).end}: $_parsedEndTime",
+                        style: TextStyle(fontSize: 20),
+                      ),
                     ),
                     Visibility(
                       visible: _parsedStartTime != "",
                       child: IconButton(
-                          padding: EdgeInsets.only(left: 35.0),
                           focusNode: thirdSecondFocusNode,
-                          icon: FaIcon(FontAwesomeIcons.clock, size: 30),
+                          icon: FaIcon(FontAwesomeIcons.clock, size: 25),
                           onPressed: () async {
                             await _setEndTime(context);
                           }),
                     ),
                   ],
                 ),
-                SizedBox(height: 10),
+                SizedBox(height: 20),
                 Row(
                   mainAxisAlignment: MainAxisAlignment.center,
                   children: <Widget>[
                     AutoSizeText(
                       S.of(context).testComplexity,
-                      minFontSize: 15,
+                      minFontSize: 20,
                     ),
                     IconButton(
                       key: _complexityKey,
@@ -299,7 +305,7 @@ class _SettingsFormState extends State<SettingsForm> {
                     FlatButton(
                       onPressed: () => Navigator.pop(context),
                       child: Text(S.of(context).cancel),
-                      color: Colors.redAccent.shade100,
+                      color: Colors.red.shade200,
                     ),
                     Visibility(
                       visible: _parsedDueDate != "" &&
@@ -356,9 +362,9 @@ class _SettingsFormState extends State<SettingsForm> {
   void _showComplexity() async {
     TutorialCoachMark(context,
         targets: targets,
-        colorShadow: Colors.red,
+        colorShadow: Colors.teal.shade200,
         textSkip: S.of(context).done,
-        paddingFocus: 10,
+        paddingFocus: 5,
         alignSkip: Alignment.bottomCenter,
         opacityShadow: 1,
         finish: () {}, clickTarget: (target) {

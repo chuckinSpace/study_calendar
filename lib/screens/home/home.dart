@@ -172,7 +172,7 @@ class _HomeState extends State<Home> {
 
     TutorialCoachMark(context,
         targets: targets,
-        colorShadow: Colors.red,
+        colorShadow: Colors.teal.shade200,
         textSkip: S.of(context).done,
         paddingFocus: 10,
         alignSkip: Alignment.bottomCenter,
@@ -190,7 +190,7 @@ class _HomeState extends State<Home> {
     await analytics.logEvent(name: "Settings_Warning_from_Home");
     TutorialCoachMark(context,
         targets: settings,
-        colorShadow: Colors.red,
+        colorShadow: Colors.teal.shade200,
         textSkip: S.of(context).done,
         paddingFocus: 10,
         opacityShadow: 1,
