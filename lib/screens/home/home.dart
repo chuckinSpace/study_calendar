@@ -1,9 +1,5 @@
 /*
 ADSS!!!!!!
-LOG OUT!!!
-
-Add a new sessions option
-
 */
 
 import 'package:firebase_analytics/firebase_analytics.dart';
@@ -18,6 +14,7 @@ import 'package:study_calendar/screens/home/setting_form.dart';
 import 'package:study_calendar/screens/home/test_list.dart';
 import 'package:study_calendar/screens/settings/settings.dart';
 import 'package:study_calendar/services/database.dart';
+
 import 'package:tutorial_coach_mark/animated_focus_light.dart';
 import 'package:tutorial_coach_mark/tutorial_coach_mark.dart';
 import 'package:url_launcher/url_launcher.dart';
@@ -49,7 +46,10 @@ class _HomeState extends State<Home> {
 
   void initState() {
     super.initState();
-    WidgetsBinding.instance.addPostFrameCallback((_) => checkTutorial(context));
+    WidgetsBinding.instance.addPostFrameCallback((_) {
+      checkTutorial(context);
+      _setLastActivity();
+    });
   }
 
   didChangeDependencies() async {
@@ -57,7 +57,6 @@ class _HomeState extends State<Home> {
     super.didChangeDependencies();
     _userData = Provider.of<UserData>(context);
     _user = Provider.of<FirebaseUser>(context);
-    /*  await DatabaseService().setCalendars(_userData); */
   }
 
   void checkTutorial(BuildContext context) {
@@ -65,6 +64,15 @@ class _HomeState extends State<Home> {
       _showTutorial(context);
       DatabaseService()
           .updateDocument("users", _userData.uid, {"isHomeTutorialSeen": true});
+    }
+  }
+
+  _setLastActivity() async {
+    try {
+      await DatabaseService().updateDocument(
+          "users", _userData.uid, {"lastActivity": DateTime.now()});
+    } catch (e) {
+      print("error $e");
     }
   }
 
@@ -102,7 +110,7 @@ class _HomeState extends State<Home> {
         ),
       ),
       appBar: AppBar(
-        title: Text("Study Calendar", style: Theme.of(context).textTheme.title),
+        title: Text("Study Planner", style: Theme.of(context).textTheme.title),
         actions: <Widget>[
           IconButton(
             tooltip: S.of(context).tutorial,
@@ -127,6 +135,7 @@ class _HomeState extends State<Home> {
       body: _userData == null || _user == null
           ? CircularProgressIndicator()
           : Container(
+              key: ValueKey("home"),
               decoration: BoxDecoration(
                 color: Theme.of(context).backgroundColor,
               ),

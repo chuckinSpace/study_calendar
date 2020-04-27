@@ -1,4 +1,6 @@
 import 'dart:collection';
+import 'package:flutter/material.dart';
+import 'package:study_calendar/generated/l10n.dart';
 import 'package:study_calendar/models/user_data.dart';
 import 'package:study_calendar/shared/error.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
@@ -159,8 +161,8 @@ class EventFromDevice {
     }
   }
 
-  Future<String> createDeviceEvent(
-      String calendarId, Map<dynamic, dynamic> event) async {
+  Future<String> createDeviceEvent(String calendarId,
+      Map<dynamic, dynamic> event, BuildContext context) async {
     print("creting device event $event");
     DeviceCalendarPlugin _deviceCalendarPlugin = DeviceCalendarPlugin();
 
@@ -172,9 +174,10 @@ class EventFromDevice {
           .collection("tests")
           .document(event["testId"])
           .get();
+
       if (event["sessionNumber"] != null) {
         text =
-            "Study session nº ${event["sessionNumber"]} for ${test["subject"]} ";
+            "${S.of(context).studySession} nº ${event["sessionNumber"]} ${S.of(context).forWord} ${test["subject"]} ";
       } else {
         text = "${event["description"]} ${event["subject"]}";
       }

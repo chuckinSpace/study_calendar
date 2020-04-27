@@ -6,7 +6,10 @@ import 'package:study_calendar/services/database.dart';
 
 class WelcomeScreen extends StatefulWidget {
   final String uid;
-  WelcomeScreen(this.uid);
+
+  WelcomeScreen(
+    this.uid,
+  );
 
   @override
   _WelcomeScreenState createState() => _WelcomeScreenState();
@@ -101,6 +104,7 @@ class _WelcomeScreenState extends State<WelcomeScreen> {
         child: Stack(
           children: <Widget>[
             PageView.builder(
+              key: ValueKey("pageview"),
               controller: _pageViewController,
               itemCount: slides.length,
               itemBuilder: (BuildContext context, int index) {

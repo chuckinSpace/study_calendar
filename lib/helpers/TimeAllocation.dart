@@ -1,3 +1,4 @@
+import 'package:flutter/material.dart';
 import 'package:study_calendar/models/event_from_device.dart';
 import 'package:study_calendar/models/session.dart';
 import 'package:study_calendar/models/user_data.dart';
@@ -252,7 +253,7 @@ class TimeAllocation {
     }
   }
 
-  Future<int> calculateSessions() async {
+  Future<int> calculateSessions(BuildContext context) async {
     try {
       /* DatabaseService database = new DatabaseService(uid:_userData.uid); */
       /*  final userInfo = await database.getUserSettings(); */
@@ -274,7 +275,8 @@ class TimeAllocation {
         print("sessions to create");
         sweetSpotSessions.forEach((session) => print("$session\n"));
         print("CALLING ACCOMODATE");
-        return await accomodateSessions(sweetSpotSessions, eventsFromDevice);
+        return await accomodateSessions(
+            sweetSpotSessions, eventsFromDevice, context);
       }
     } catch (e) {
       print(" error on calculate Sessions $e");
@@ -755,14 +757,15 @@ class TimeAllocation {
 
   } */
 
-  Future<int> createSessions(List<Session> finalSessions) async {
+  Future<int> createSessions(
+      List<Session> finalSessions, BuildContext context) async {
     setSessionNumber(finalSessions);
 
     this.finalSessions = finalSessions;
     if (testing == false) {
       await Future.forEach(finalSessions, (session) async {
         await DatabaseService().createSessions(this.userData, this.testId,
-            session.sessionNumber, session.start, session.end);
+            session.sessionNumber, session.start, session.end, context);
       });
       return finalSessions.length;
     } else {
@@ -865,8 +868,8 @@ class TimeAllocation {
     }
   }
 
-  Future<int> accomodateSessions(
-      List<Map> sessions, List<EventFromDevice> eventsFromDevice) async {
+  Future<int> accomodateSessions(List<Map> sessions,
+      List<EventFromDevice> eventsFromDevice, BuildContext context) async {
     try {
       //first try to sessions created
       int hoursToAdd = 0;
@@ -917,7 +920,7 @@ class TimeAllocation {
       if (hoursToAdd != 0) {
         addHours(finalSessions, hoursToAdd, eventsFromDevice);
       }
-      return await createSessions(this.finalSessions);
+      return await createSessions(this.finalSessions, context);
     } catch (e) {
       print("accomodateSessions error $e");
       return 0;

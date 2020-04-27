@@ -1,4 +1,5 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
+import 'package:flutter/material.dart';
 import 'package:study_calendar/models/event_from_device.dart';
 import 'package:study_calendar/models/session.dart';
 import 'package:study_calendar/models/test.dart';
@@ -34,6 +35,7 @@ class DatabaseService {
           "deviceCalendars": [],
           "isSettingsTutorialSeen": false,
           "isHomeTutorialSeen": false,
+          "lastActivity": DateTime.now()
         });
         final calendars = await _device.retrieveCalendars();
 
@@ -70,15 +72,15 @@ class DatabaseService {
   }
 
   Future<String> createNewTest(
-    String subject,
-    int complexity,
-    int importance,
-    String description,
-    DateTime dueDate,
-    DateTime startTime,
-    DateTime endTime,
-    UserData _userData,
-  ) async {
+      String subject,
+      int complexity,
+      int importance,
+      String description,
+      DateTime dueDate,
+      DateTime startTime,
+      DateTime endTime,
+      UserData _userData,
+      BuildContext context) async {
     print("uid on create test $uid");
     EventFromDevice eventFromDevice = EventFromDevice();
     try {
@@ -114,8 +116,9 @@ class DatabaseService {
         "end": backTest["end"].toDate(),
         "testId": testSnap.documentID
       };
+
       final calendarEventId = await eventFromDevice.createDeviceEvent(
-          _userData.calendarToUse, testForDevice);
+          _userData.calendarToUse, testForDevice, context);
       if (testCreated != null) {
         await testCollection
             .document(testCreated.documentID)
@@ -275,13 +278,8 @@ class DatabaseService {
     }
   }
 
-  Future createSessions(
-    UserData _userData,
-    String testId,
-    int sessionNumber,
-    DateTime start,
-    DateTime end,
-  ) async {
+  Future createSessions(UserData _userData, String testId, int sessionNumber,
+      DateTime start, DateTime end, BuildContext context) async {
     EventFromDevice eventFromDevice = EventFromDevice();
     try {
       final event = {
@@ -296,7 +294,7 @@ class DatabaseService {
 
       final response = await sessionsCollection.add(event);
       final calendarEventId = await eventFromDevice.createDeviceEvent(
-          _userData.calendarToUse, event);
+          _userData.calendarToUse, event, context);
 
       if (response != null) {
         await sessionsCollection

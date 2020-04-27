@@ -182,7 +182,7 @@ class S {
 
   String get calendarsTut {
     return Intl.message(
-      'Select which calendar to use. \nStudy Calendar will retrieve events from this calendar to check for availability,it will also write the tests and sessions created.',
+      'Select which calendar to use. \nStudy Planner will retrieve events from this calendar to check for availability,it will also write the tests and sessions created.',
       name: 'calendarsTut',
       desc: '',
       args: [],
@@ -191,7 +191,7 @@ class S {
 
   String get sweetSpotTut {
     return Intl.message(
-      'Study Calendar will always try to allocate sessions between these times first.',
+      'Study Planner will always try to allocate sessions between these times first.',
       name: 'sweetSpotTut',
       desc: '',
       args: [],
@@ -209,7 +209,7 @@ class S {
 
   String get nightOwlTut {
     return Intl.message(
-      'If your sweet spot times are busy, Study Calendar will try later that day if this option is selected. Otherwise it will try earlier that day.',
+      'If your sweet spot times are busy, Study Planner will try later that day if this option is selected. Otherwise it will try earlier that day.',
       name: 'nightOwlTut',
       desc: '',
       args: [],
@@ -326,7 +326,7 @@ class S {
 
   String get testComplexityTut {
     return Intl.message(
-      'The more complex the test, the more sessions we will try to create.\nThe final amount of session will depend on how close is the due date and how much time available you have on your calendar.\nThe maximum amount of sessions is 5.',
+      'The more complex the test, the more sessions we will try to create.\nThe final amount of sessions will depend on how close the due date is, and how much time available you have on your calendar.\nIf there is enough time and availability the number of sessions will be equal to the complexity selected.\nExample: Complexity 10 / Number of sessions 10\nNote: Dificulty selector will only be visible if the test due date is more than 1 day from today\nMax number of Sessions are 30',
       name: 'testComplexityTut',
       desc: '',
       args: [],
@@ -643,6 +643,33 @@ class S {
     return Intl.message(
       'ALREADY HAVE AN ACCOUNT',
       name: 'haveAccount',
+      desc: '',
+      args: [],
+    );
+  }
+
+  String get studySession {
+    return Intl.message(
+      'Study Session',
+      name: 'studySession',
+      desc: '',
+      args: [],
+    );
+  }
+
+  String get forWord {
+    return Intl.message(
+      'for',
+      name: 'forWord',
+      desc: '',
+      args: [],
+    );
+  }
+
+  String get addingSessions {
+    return Intl.message(
+      'Adding sessions to your device...',
+      name: 'addingSessions',
       desc: '',
       args: [],
     );

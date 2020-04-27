@@ -23,6 +23,7 @@ class _SettingsState extends State<Settings> {
   GlobalKey _showCutOff = GlobalKey();
   GlobalKey _showSweet = GlobalKey();
   GlobalKey _showNightOwl = GlobalKey();
+
   bool _isCalendarExpanded = false;
   bool _isSweetExpanded = false;
   bool _isCutExpanded = false;
@@ -57,6 +58,7 @@ class _SettingsState extends State<Settings> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
+      key: ValueKey("settingsPage"),
       appBar: AppBar(
         title: Text(
           S.of(context).settings,
@@ -147,7 +149,8 @@ class _SettingsState extends State<Settings> {
                                 color: Colors.white,
                               ),
                               title: Text(S.of(context).sweetSpot,
-                                  style: TextStyle(color: Colors.white)),
+                                  style: TextStyle(color: Colors.white),
+                                  key: ValueKey("sweetSpotBtn")),
                               leading: FaIcon(
                                 FontAwesomeIcons.clock,
                                 color: Colors.white,

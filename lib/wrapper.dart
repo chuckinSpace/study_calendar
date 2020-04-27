@@ -2,6 +2,7 @@ import 'package:firebase_analytics/firebase_analytics.dart';
 import 'package:firebase_analytics/observer.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
+
 import 'package:study_calendar/models/user_data.dart';
 import 'package:study_calendar/screens/authenticate/signUp.dart';
 
@@ -18,6 +19,7 @@ class Wrapper extends StatelessWidget {
   Widget build(BuildContext context) {
     final _user = Provider.of<FirebaseUser>(context);
     final _userData = Provider.of<UserData>(context);
+
     // return eurhter home or autheticate depeending on auth
     if (_user == null) {
       return SignupPage();

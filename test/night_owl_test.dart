@@ -1,3 +1,4 @@
+import 'package:flutter/material.dart';
 import 'package:study_calendar/models/event_from_device.dart';
 import 'package:study_calendar/models/session.dart';
 import 'package:flutter_test/flutter_test.dart';
@@ -5,6 +6,7 @@ import "package:study_calendar/helpers/TimeAllocation.dart";
 
 final time = TimeAllocation();
 final today = new DateTime.now();
+BuildContext context;
 void main() {
   TestWidgetsFlutterBinding.ensureInitialized();
   setUp(() {
@@ -765,7 +767,7 @@ void main() {
       time.idealStudyLenght = 1;
       time.nightOwl = true;
 
-      time.accomodateSessions(sessions, eventsFromDevice);
+      time.accomodateSessions(sessions, eventsFromDevice, context);
       expect(time.finalSessions.length, 4);
       expect(time.finalSessions, isA<List<Session>>());
       expect(time.finalSessions[0].start, equals(time1));
@@ -854,7 +856,7 @@ void main() {
           calendarId: "noId",
           allDay: false));
 
-      time.accomodateSessions(sessions, eventsFromDevice);
+      time.accomodateSessions(sessions, eventsFromDevice, context);
       /*  expect(time.finalSessions.length, 4);
       expect(time.finalSessions, isA<List<Session>>());
       expect(time.finalSessions[0].start,
@@ -949,7 +951,7 @@ void main() {
           calendarId: "noId",
           allDay: false));
 
-      time.accomodateSessions(sessions, eventsFromDevice);
+      time.accomodateSessions(sessions, eventsFromDevice, context);
       expect(time.finalSessions.length, 4);
       expect(time.finalSessions, isA<List<Session>>());
       expect(time.finalSessions[0].start,
@@ -1002,7 +1004,7 @@ void main() {
 
       eventsFromDevice.add(event1);
 
-      time.accomodateSessions(sessions, eventsFromDevice);
+      time.accomodateSessions(sessions, eventsFromDevice, context);
       expect(time.finalSessions.length, 4);
       expect(time.finalSessions, isA<List<Session>>());
       expect(time.finalSessions[0].start,
@@ -1057,7 +1059,7 @@ void main() {
 
       time.nightOwl = true;
 
-      time.accomodateSessions(sessions, eventsFromDevice);
+      time.accomodateSessions(sessions, eventsFromDevice, context);
       expect(time.finalSessions.length, 4);
       expect(time.finalSessions, isA<List<Session>>());
       expect(time.finalSessions[0].start, equals(time1));
@@ -1115,7 +1117,7 @@ void main() {
 
       time.nightOwl = true;
 
-      time.accomodateSessions(sessions, eventsFromDevice);
+      time.accomodateSessions(sessions, eventsFromDevice, context);
       expect(time.finalSessions.length, 4);
       expect(time.finalSessions, isA<List<Session>>());
       expect(time.finalSessions[0].start, equals(time1));
@@ -1173,7 +1175,7 @@ void main() {
 
       time.nightOwl = false;
 
-      time.accomodateSessions(sessions, eventsFromDevice);
+      time.accomodateSessions(sessions, eventsFromDevice, context);
       expect(time.finalSessions.length, 4);
       expect(time.finalSessions, isA<List<Session>>());
       expect(time.finalSessions[0].start, equals(time1));
@@ -1238,7 +1240,7 @@ void main() {
 
       time.nightOwl = false;
 
-      time.accomodateSessions(sessions, eventsFromDevice);
+      time.accomodateSessions(sessions, eventsFromDevice, context);
       expect(time.finalSessions.length, 4);
       expect(time.finalSessions, isA<List<Session>>());
       expect(time.finalSessions[0].start, equals(time1));
@@ -1296,7 +1298,7 @@ void main() {
 
       time.nightOwl = true;
 
-      time.accomodateSessions(sessions, eventsFromDevice);
+      time.accomodateSessions(sessions, eventsFromDevice, context);
       expect(time.finalSessions.length, 5);
       expect(time.finalSessions, isA<List<Session>>());
       expect(time.finalSessions[1].start, equals(time1));
@@ -1352,7 +1354,7 @@ void main() {
       sessions.add(session5);
       List<EventFromDevice> eventsFromDevice = [];
 
-      time.accomodateSessions(sessions, eventsFromDevice);
+      time.accomodateSessions(sessions, eventsFromDevice, context);
       expect(time.finalSessions.length, 5);
       expect(time.finalSessions, isA<List<Session>>());
       expect(time.finalSessions[0].start,
@@ -1410,7 +1412,7 @@ void main() {
       sessions.add(session5);
       List<EventFromDevice> eventsFromDevice = [];
 
-      time.accomodateSessions(sessions, eventsFromDevice);
+      time.accomodateSessions(sessions, eventsFromDevice, context);
       expect(time.finalSessions.length, 5);
       expect(time.finalSessions, isA<List<Session>>());
       expect(time.finalSessions[0].start,
@@ -1475,7 +1477,7 @@ void main() {
       eventsFromDevice.add(event2);
       eventsFromDevice.add(event3);
 
-      time.accomodateSessions(sessions, eventsFromDevice);
+      time.accomodateSessions(sessions, eventsFromDevice, context);
       expect(time.finalSessions.length, 5);
       expect(time.finalSessions, isA<List<Session>>());
       expect(time.finalSessions[0].start, equals(time5));

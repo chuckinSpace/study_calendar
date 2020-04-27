@@ -40,7 +40,7 @@ class _SettingsFormState extends State<SettingsForm> {
   String _parsedStartTime = "";
   String _parsedEndTime = "";
   bool isLoading = false;
-
+  int _daysUntilTest = 1;
   TimeOfDay _timeToStart;
 
   Future<void> _showDateTimePicker(BuildContext context) async {
@@ -52,6 +52,7 @@ class _SettingsFormState extends State<SettingsForm> {
       context: context,
       theme: ThemeData(primarySwatch: Colors.blue),
     );
+
     if (daySelected != null) {
       setState(() {
         _currentDay = daySelected;
@@ -76,6 +77,18 @@ class _SettingsFormState extends State<SettingsForm> {
           _currentStartTime.minute,
           0,
           0));
+      if (daySelected != null) {
+        var daysToTest = TimeAllocation().daysUntil(_currentDueDate);
+        if (daysToTest == 0) {
+          daysToTest = 1;
+        } else if (daysToTest > 30) {
+          _daysUntilTest = 30;
+        } else {
+          _daysUntilTest = daysToTest;
+        }
+
+        print("_daysUntilTest $_daysUntilTest");
+      }
     });
   }
 
@@ -145,8 +158,28 @@ class _SettingsFormState extends State<SettingsForm> {
           ? Container(
               child: Padding(
               padding: const EdgeInsets.all(30.0),
-              child: SpinKitFoldingCube(
-                  color: Theme.of(context).primaryColor, size: 150),
+              child: Container(
+                child: Column(
+                  children: <Widget>[
+                    Row(mainAxisAlignment: MainAxisAlignment.center, children: [
+                      Padding(
+                        padding: const EdgeInsets.only(right: 20.0),
+                        child: AutoSizeText(
+                          "${S.of(context).addingSessions}",
+                          style: TextStyle(
+                              fontSize: 15, fontStyle: FontStyle.italic),
+                          maxLines: 1,
+                        ),
+                      )
+                    ]),
+                    Padding(
+                      padding: const EdgeInsets.only(top: 50.0),
+                      child: SpinKitFoldingCube(
+                          color: Theme.of(context).primaryColor, size: 150),
+                    ),
+                  ],
+                ),
+              ),
             ))
           : Column(
               children: <Widget>[
@@ -234,7 +267,7 @@ class _SettingsFormState extends State<SettingsForm> {
                       width: 200.0,
                       child: Text(
                         "${S.of(context).start}: $_parsedStartTime",
-                        style: TextStyle(fontSize: 20),
+                        style: TextStyle(fontSize: 15),
                       ),
                     ),
                     IconButton(
@@ -254,7 +287,7 @@ class _SettingsFormState extends State<SettingsForm> {
                       width: 200.0,
                       child: Text(
                         "${S.of(context).end}: $_parsedEndTime",
-                        style: TextStyle(fontSize: 20),
+                        style: TextStyle(fontSize: 15),
                       ),
                     ),
                     Visibility(
@@ -269,34 +302,45 @@ class _SettingsFormState extends State<SettingsForm> {
                   ],
                 ),
                 SizedBox(height: 20),
-                Row(
-                  mainAxisAlignment: MainAxisAlignment.center,
-                  children: <Widget>[
-                    AutoSizeText(
-                      S.of(context).testComplexity,
-                      minFontSize: 20,
-                    ),
-                    IconButton(
-                      key: _complexityKey,
-                      onPressed: _showComplexity,
-                      tooltip: S.of(context).whatIsThis,
-                      icon: FaIcon(
-                        FontAwesomeIcons.questionCircle,
-                        size: 17,
+                Visibility(
+                  visible: _daysUntilTest > 1,
+                  child: Row(
+                    mainAxisAlignment: MainAxisAlignment.center,
+                    children: <Widget>[
+                      AutoSizeText(
+                        S.of(context).testComplexity,
+                        minFontSize: 20,
                       ),
-                    )
-                  ],
+                      IconButton(
+                        key: _complexityKey,
+                        onPressed: _showComplexity,
+                        tooltip: S.of(context).whatIsThis,
+                        icon: FaIcon(
+                          FontAwesomeIcons.questionCircle,
+                          size: 17,
+                        ),
+                      )
+                    ],
+                  ),
                 ),
-                Slider(
-                  label: _currentComplexity.toString(),
-                  value: _currentComplexity.toDouble(),
-                  activeColor: Colors.red[_currentComplexity * 100 ?? 0],
-                  inactiveColor: Colors.red[_currentComplexity * 100 ?? 0],
-                  min: 1,
-                  max: 5,
-                  divisions: 4,
-                  onChanged: (val) => setState(
-                    () => _currentComplexity = val.round(),
+                Visibility(
+                  visible: _daysUntilTest > 1,
+                  child: Slider(
+                    label: _currentComplexity.toString(),
+                    value: _currentComplexity.toDouble() <=
+                            _daysUntilTest.toDouble()
+                        ? _currentComplexity.toDouble()
+                        : 1,
+                    activeColor: Colors.red[_currentComplexity * 100 ?? 0],
+                    inactiveColor: Colors.red[_currentComplexity * 100 ?? 0],
+                    min: 1,
+                    max: _daysUntilTest.toDouble() > 30
+                        ? 30.0
+                        : _daysUntilTest.toDouble(),
+                    divisions: _daysUntilTest > 30 ? 30 : _daysUntilTest,
+                    onChanged: (val) => setState(
+                      () => _currentComplexity = val.round(),
+                    ),
                   ),
                 ),
                 Row(
@@ -333,7 +377,8 @@ class _SettingsFormState extends State<SettingsForm> {
                                           _currentDueDate,
                                           _currentStartTime,
                                           _currentEndTime,
-                                          _userData);
+                                          _userData,
+                                          context);
 
                               numOfFinalSessions = await TimeAllocation(
                                       userData: _userData,
@@ -341,7 +386,7 @@ class _SettingsFormState extends State<SettingsForm> {
                                       complexity: _currentComplexity,
                                       dueDate: _currentDueDate,
                                       testId: testId)
-                                  .calculateSessions();
+                                  .calculateSessions(context);
                               _showWebColoredToast(context);
                               if (this.mounted) {
                                 setState(() {
@@ -387,7 +432,7 @@ class _SettingsFormState extends State<SettingsForm> {
       msg: message,
       toastLength: Toast.LENGTH_LONG,
       textColor: Colors.black,
-      fontSize: 20,
+      fontSize: 15,
       backgroundColor: Colors.green.shade200,
       timeInSecForIosWeb: 5,
     );
@@ -398,7 +443,7 @@ class _SettingsFormState extends State<SettingsForm> {
       msg: S.of(context).endDateError,
       toastLength: Toast.LENGTH_LONG,
       textColor: Colors.black,
-      fontSize: 20,
+      fontSize: 15,
       backgroundColor: Colors.red.shade200,
       timeInSecForIosWeb: 5,
     );

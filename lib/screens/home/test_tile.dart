@@ -22,6 +22,8 @@ class TestTile extends StatefulWidget {
 }
 
 class _TestTileState extends State<TestTile> {
+  bool _isDeleting = false;
+
   @override
   Widget build(BuildContext context) {
     final _parsedDueDate =
@@ -126,7 +128,7 @@ class _TestTileState extends State<TestTile> {
       msg: message,
       toastLength: Toast.LENGTH_LONG,
       textColor: Colors.black,
-      fontSize: 18,
+      fontSize: 15,
       backgroundColor: Colors.red.shade200,
       timeInSecForIosWeb: 5,
     );
@@ -150,23 +152,40 @@ class _TestTileState extends State<TestTile> {
             ),
           ),
           actions: <Widget>[
-            FlatButton(
-              child: Text(S.of(context).delete,
-                  style: TextStyle(color: Colors.red.shade400)),
-              onPressed: () async {
-                final numSessionsDeleted = await DatabaseService().deleteTest(
-                    this.widget.test.testId,
-                    this.widget.test.calendarToUse,
-                    this.widget.test.calendarEventId);
-                _showTestDeletedToast(numSessionsDeleted, context);
-                Navigator.of(context).pop();
-              },
+            Visibility(
+              visible: !_isDeleting,
+              child: FlatButton(
+                child: Text(S.of(context).delete,
+                    style: TextStyle(color: Colors.red.shade400)),
+                onPressed: () async {
+                  if (!_isDeleting) {
+                    print("inside, $_isDeleting");
+                    setState(() {
+                      _isDeleting = true;
+                    });
+
+                    final numSessionsDeleted = await DatabaseService()
+                        .deleteTest(
+                            this.widget.test.testId,
+                            this.widget.test.calendarToUse,
+                            this.widget.test.calendarEventId);
+
+                    _showTestDeletedToast(numSessionsDeleted, context);
+                    Navigator.of(context).pop();
+                  }
+                },
+              ),
             ),
-            FlatButton(
-              child: Text(S.of(context).cancel.toUpperCase()),
-              onPressed: () {
-                Navigator.of(context).pop();
-              },
+            Visibility(
+              visible: !_isDeleting,
+              child: FlatButton(
+                child: Text(S.of(context).cancel.toUpperCase()),
+                onPressed: () {
+                  if (!_isDeleting) {
+                    Navigator.of(context).pop();
+                  }
+                },
+              ),
             ),
           ],
         );
@@ -183,17 +202,18 @@ class Sessions extends StatefulWidget {
 class _SessionsState extends State<Sessions> {
   @override
   Widget build(BuildContext context) {
-    final _sessions = Provider.of<List<Session>>(context);
+    final _originalSessions = Provider.of<List<Session>>(context);
 
     return Padding(
       padding: const EdgeInsets.all(10.0),
       child: Container(
         child: ListView.builder(
-            itemCount: _sessions == null ? 0 : _sessions?.length,
+            itemCount:
+                _originalSessions == null ? 0 : _originalSessions?.length,
             shrinkWrap: true,
             physics: ClampingScrollPhysics(),
             itemBuilder: (context, index) {
-              return SessionTile(session: _sessions[index] ?? "");
+              return SessionTile(session: _originalSessions[index] ?? "");
             }),
       ),
     );

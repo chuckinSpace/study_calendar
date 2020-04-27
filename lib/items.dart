@@ -10,9 +10,9 @@ List items = [
   {
     "header": "Calendar",
     "description":
-        "Study Calendar will create the neccesary amount of study sessions and add them to your Calendar during the perfect times for you to study. Always working around your schedule!",
+        "Study Planner will create the neccesary amount of study sessions and add them to your Calendar during the perfect times for you to study. Always working around your schedule!",
     "descripcion":
-        "Study Calendar creará la cantidad necesario de sesiones de estudio y las agregara a tu Calendario en las horas y días ideales para estudiar. Siempre teniendo en cuenta tus otros compromisos!",
+        "Study Planner creará la cantidad necesario de sesiones de estudio y las agregara a tu Calendario en las horas y días ideales para estudiar. Siempre teniendo en cuenta tus otros compromisos!",
     "image": "assets/time.png"
   },
   {

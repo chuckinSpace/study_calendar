@@ -16,10 +16,10 @@
   "nightOwl": "Pajaro Nocturno",
   "logOut": "Cerrar Sesión",
   "calendars": "Calendarios",
-  "calendarsTut": "Selecciona que calendario quieres sincronizar con la App. Study Calendar analizara el tiempo que tienes disponible para crear sesiones y tests.",
-  "sweetSpotTut": "Study Calendar siempre intentara colocar las sesiones de estudio entre estas horas primero.",
+  "calendarsTut": "Selecciona que calendario quieres sincronizar con la App. Study Planner analizara el tiempo que tienes disponible para crear sesiones y tests.",
+  "sweetSpotTut": "Study Planner siempre intentara colocar las sesiones de estudio entre estas horas primero.",
   "cutOffTut": "Estas horas son para descansar,usualmente para las horas de sueño.\nTip: Puedes usar el corte de Mañana para tomar en cuenta tus clases\nEjemplo: tus clases terminan a las 4pm, setea tu Corte de Mañana a las 4pm.",
-  "nightOwlTut": "Si tu Punto Perfecto esta ocupado con otros eventos, Study Calendar intentará colocar las sesiones de estudio mas tarde ese día cuando Pajaro Nocturno esta activo.\nDe lo contrario intentará mas temprano ese día.",
+  "nightOwlTut": "Si tu Punto Perfecto esta ocupado con otros eventos, Study Planner intentará colocar las sesiones de estudio mas tarde ese día cuando Pajaro Nocturno esta activo.\nDe lo contrario intentará mas temprano ese día.",
   "morning": "MAÑANA",
   "night": "NOCHE",
   "start": "INICIO",
@@ -32,7 +32,7 @@
   "pickADate": " Seleccione una Fecha",
   "testComplexity": "Dificultad del test",
   "whatIsThis": "Que es esto?",
-  "testComplexityTut": "Entre mas complejo es tu test, mayor cantidad de sesiones de estudio intentaremos colocar en tu calendario.\nEl número final de sesiones dependerá de cual es la fecha del test y de cuanto tiempo disponible encontremos en tu calendario\nEl número máximo de sesiones a crear es 5.",
+  "testComplexityTut": "Entre mas complejo es tu test, mayor cantidad de sesiones de estudio intentaremos colocar en tu calendario.\nEl número final de sesiones dependerá de cual es la fecha del test y de cuanto tiempo disponible encontremos en tu calendario\nEn el caso de que haya suficiente disponibilidad en tu calendario y suficientes dias hasta tu test el numero final de sesiones será el mismo que la dificultad que selecciones.\nEjemplo: Dificultad 10 / Numero de sesiones 10\nNota: El selector de dificultad solo será visible cuando la fecha del test sea mas de un día desde hoy\nEl numero máximo de sesiones es 30",
   "cancel": "Cancelar",
   "noTimeForSessions": "No hay suficiente tiempo para hacer sesiones, se creó solo el Test",
   "oneSessionCreated": "Test y una nueva sesión de estudio fue añadida a tu Calendario",
@@ -67,5 +67,8 @@
   "forgot": "Olvidaste tu contraseña?",
   "createAccount": "CREAR CUENTA",
   "accessGoogle": "ACCEDER CON GOOGLE",
-  "haveAccount": "YA TENGO UNA CUENTA"
+  "haveAccount": "YA TENGO UNA CUENTA",
+  "studySession": "Sesión de Estudio",
+  "forWord": "para",
+  "addingSessions": "Creando sesiones en tu dispositivo..."
 }

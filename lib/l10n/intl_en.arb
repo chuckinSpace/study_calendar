@@ -16,10 +16,10 @@
   "nightOwl": "Night Owl",
   "logOut": "Log Out",
   "calendars": "Calendars",
-  "calendarsTut": "Select which calendar to use. \nStudy Calendar will retrieve events from this calendar to check for availability,it will also write the tests and sessions created.",
-  "sweetSpotTut": "Study Calendar will always try to allocate sessions between these times first.",
+  "calendarsTut": "Select which calendar to use. \nStudy Planner will retrieve events from this calendar to check for availability,it will also write the tests and sessions created.",
+  "sweetSpotTut": "Study Planner will always try to allocate sessions between these times first.",
   "cutOffTut": "These are the times you do not want to study, usually used for bed time.\nHint: \nYou can use the morning cut off to take your classes into account!\nExample: Your classes end every day around 4pm, set the morning cut off to 4pm.",
-  "nightOwlTut": "If your sweet spot times are busy, Study Calendar will try later that day if this option is selected. Otherwise it will try earlier that day.",
+  "nightOwlTut": "If your sweet spot times are busy, Study Planner will try later that day if this option is selected. Otherwise it will try earlier that day.",
   "morning": "MORNING",
   "night": "NIGHT",
   "start": "START",
@@ -32,7 +32,7 @@
   "pickADate": " Pick a Date",
   "testComplexity": "Test Complexity",
   "whatIsThis": "What is this?",
-  "testComplexityTut": "The more complex the test, the more sessions we will try to create.\nThe final amount of session will depend on how close is the due date and how much time available you have on your calendar.\nThe maximum amount of sessions is 5.",
+  "testComplexityTut": "The more complex the test, the more sessions we will try to create.\nThe final amount of sessions will depend on how close the due date is, and how much time available you have on your calendar.\nIf there is enough time and availability the number of sessions will be equal to the complexity selected.\nExample: Complexity 10 / Number of sessions 10\nNote: Dificulty selector will only be visible if the test due date is more than 1 day from today\nMax number of Sessions are 30",
   "cancel": "Cancel",
   "noTimeForSessions": "The test is too soon,\nno session were created for this test",
   "oneSessionCreated": "Test And 1 new study session was added to your calendar",
@@ -67,5 +67,8 @@
   "forgot": "Forgot Your Password?",
   "createAccount": "CREATE ACCOUNT",
   "accessGoogle": "ACCESS WITH GOOGLE",
-  "haveAccount": "ALREADY HAVE AN ACCOUNT"
+  "haveAccount": "ALREADY HAVE AN ACCOUNT",
+  "studySession": "Study Session",
+  "forWord": "for",
+  "addingSessions": "Adding sessions to your device..."
 }
